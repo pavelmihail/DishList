@@ -15,6 +15,6 @@ class DishList (
 
     @ColumnInfo(name = "cooking_time") val cookingTime: String,
     @ColumnInfo(name = "instruction") val directionToCook: String,
-    @ColumnInfo(name = "cooking_time") val favoriteDish: Boolean = false,
+    @ColumnInfo(name = "favorite_dish") val favoriteDish: Boolean = false,
     @PrimaryKey(autoGenerate = true) val id: Int = 0
 )

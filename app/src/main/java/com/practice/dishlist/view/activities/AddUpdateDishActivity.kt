@@ -24,6 +24,7 @@ import android.text.TextUtils
 import android.util.Log
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
@@ -41,9 +42,13 @@ import com.karumi.dexter.listener.PermissionGrantedResponse
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.karumi.dexter.listener.single.PermissionListener
+import com.practice.dishlist.application.DishListApplication
 import com.practice.dishlist.databinding.DialogCustomListBinding
+import com.practice.dishlist.model.entities.DishList
 import com.practice.dishlist.utils.Constants
 import com.practice.dishlist.view.adapers.CustomListItemAdapter
+import com.practice.dishlist.viewmodel.DishListViewModel
+import com.practice.dishlist.viewmodel.DishListViewModelFactory
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -56,6 +61,10 @@ class AddUpdateDishActivity : AppCompatActivity(), View.OnClickListener {
     private var mImagePath: String = ""
 
     private lateinit var mCustomListDialog: Dialog
+
+    private val mDishListViewModel : DishListViewModel by viewModels{
+        DishListViewModelFactory((application as DishListApplication).repository)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -264,11 +273,25 @@ class AddUpdateDishActivity : AppCompatActivity(), View.OnClickListener {
                             ).show()
                         }
                         else -> {
+                            val dishListDetails = DishList(
+                                mImagePath,
+                                Constants.DISH_IMAGE_SOURCE_LOCAL,
+                                title,
+                                type,
+                                category,
+                                ingredients,
+                                cookingTimeInMinutes,
+                                cookingDirection,
+                                false
+                            )
+
+                            mDishListViewModel.insert(dishListDetails)
                             Toast.makeText(
                                 this@AddUpdateDishActivity,
-                                "all the entries are valid.",
+                                "You successfully added your favorite dish details",
                                 Toast.LENGTH_SHORT
                             ).show()
+                            finish()
                         }
                     }
                 }

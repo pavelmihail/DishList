@@ -8,6 +8,9 @@ import com.practice.dishlist.model.entities.DishList
 
 @Database(entities = [DishList::class], version = 1)
 abstract class DishListRoomDatabase : RoomDatabase() {
+
+    abstract fun dishListDao(): DishListDao
+
     companion object {
         @Volatile
         private var INSTANCE: DishListRoomDatabase? = null

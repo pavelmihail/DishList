@@ -5,7 +5,7 @@ import androidx.room.Insert
 import com.practice.dishlist.model.entities.DishList
 
 @Dao
-interface DishListDAO {
+interface DishListDao {
 
     @Insert
     suspend fun insertDishListDetails(dishList: DishList)

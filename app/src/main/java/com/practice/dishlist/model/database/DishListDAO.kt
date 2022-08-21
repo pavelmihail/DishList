@@ -8,5 +8,5 @@ import com.practice.dishlist.model.entities.DishList
 interface DishListDAO {
 
     @Insert
-    suspend fun insertFishListDetails(dishList: DishList)
+    suspend fun insertDishListDetails(dishList: DishList)
 }

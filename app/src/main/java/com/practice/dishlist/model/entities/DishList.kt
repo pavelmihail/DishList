@@ -4,7 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "fish_list_table")
+@Entity(tableName = "dish_list_table")
 class DishList (
     @ColumnInfo val image: String,
     @ColumnInfo(name = "image_source") val imageSource: String,

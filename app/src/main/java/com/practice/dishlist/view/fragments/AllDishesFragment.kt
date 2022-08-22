@@ -2,13 +2,18 @@ package com.practice.dishlist.view.fragments
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import com.practice.dishlist.R
+import com.practice.dishlist.application.DishListApplication
 import com.practice.dishlist.databinding.FragmentAllDishesBinding
 import com.practice.dishlist.view.activities.AddUpdateDishActivity
+import com.practice.dishlist.viewmodel.DishListViewModel
+import com.practice.dishlist.viewmodel.DishListViewModelFactory
 import com.practice.dishlist.viewmodel.HomeViewModel
 
 class AllDishesFragment : Fragment() {
@@ -19,18 +24,22 @@ class AllDishesFragment : Fragment() {
     // onDestroyView.
     private val binding get() = _binding!!
 
+    private val mDishListViewModel: DishListViewModel by viewModels {
+        DishListViewModelFactory((requireActivity().application as DishListApplication).repository)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
     }
 
     override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View {
         val homeViewModel =
-                ViewModelProvider(this).get(HomeViewModel::class.java)
+            ViewModelProvider(this).get(HomeViewModel::class.java)
 
         _binding = FragmentAllDishesBinding.inflate(inflater, container, false)
         val root: View = binding.root
@@ -42,13 +51,26 @@ class AllDishesFragment : Fragment() {
         return root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        mDishListViewModel.allDishesList.observe(viewLifecycleOwner) { dishes ->
+            dishes?.let {
+                for (item in it) {
+                    Log.i("Dish Title", "${item.id} :: ${item.title}")
+
+                }
+            }
+
+        }
+    }
+
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu_all_dishes, menu)
         super.onCreateOptionsMenu(menu, inflater)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId){
+        when (item.itemId) {
             R.id.action_add_dish -> {
                 startActivity(Intent(requireActivity(), AddUpdateDishActivity::class.java))
                 return true

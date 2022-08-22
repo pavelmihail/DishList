@@ -6,7 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.practice.dishlist.model.entities.DishList
 
-@Database(entities = [DishList::class], version = 1)
+@Database(entities = [DishList::class], version = 2)
 abstract class DishListRoomDatabase : RoomDatabase() {
 
     abstract fun dishListDao(): DishListDao

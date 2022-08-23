@@ -4,25 +4,24 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.*
+import android.widget.GridLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.GridLayoutManager
 import com.practice.dishlist.R
 import com.practice.dishlist.application.DishListApplication
 import com.practice.dishlist.databinding.FragmentAllDishesBinding
 import com.practice.dishlist.view.activities.AddUpdateDishActivity
+import com.practice.dishlist.view.adapers.DishListAdapter
 import com.practice.dishlist.viewmodel.DishListViewModel
 import com.practice.dishlist.viewmodel.DishListViewModelFactory
 import com.practice.dishlist.viewmodel.HomeViewModel
 
 class AllDishesFragment : Fragment() {
 
-    private var _binding: FragmentAllDishesBinding? = null
-
-    // This property is only valid between onCreateView and
-    // onDestroyView.
-    private val binding get() = _binding!!
+    private lateinit var mBinding: FragmentAllDishesBinding
 
     private val mDishListViewModel: DishListViewModel by viewModels {
         DishListViewModelFactory((requireActivity().application as DishListApplication).repository)
@@ -38,26 +37,28 @@ class AllDishesFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val homeViewModel =
-            ViewModelProvider(this).get(HomeViewModel::class.java)
-
-        _binding = FragmentAllDishesBinding.inflate(inflater, container, false)
-        val root: View = binding.root
-
-        val textView: TextView = binding.textHome
-        homeViewModel.text.observe(viewLifecycleOwner) {
-            textView.text = it
-        }
-        return root
+        mBinding = FragmentAllDishesBinding.inflate(inflater, container, false)
+        return mBinding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        mBinding.rvDishesList.layoutManager = GridLayoutManager(requireActivity(), 2)
+        val dishListAdapter = DishListAdapter(this@AllDishesFragment)
+
+        mBinding.rvDishesList.adapter = dishListAdapter
+
         mDishListViewModel.allDishesList.observe(viewLifecycleOwner) { dishes ->
             dishes?.let {
-                for (item in it) {
-                    Log.i("Dish Title", "${item.id} :: ${item.title}")
+                if (it.isNotEmpty()) {
+                    mBinding.rvDishesList.visibility = View.VISIBLE
+                    mBinding.tvNoDishesAddedYey.visibility = View.GONE
 
+                    dishListAdapter.dishesList(it)
+                } else {
+                    mBinding.rvDishesList.visibility = View.GONE
+                    mBinding.tvNoDishesAddedYey.visibility = View.VISIBLE
                 }
             }
 
@@ -77,10 +78,5 @@ class AllDishesFragment : Fragment() {
             }
         }
         return super.onOptionsItemSelected(item)
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 }
